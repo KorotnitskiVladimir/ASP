@@ -13,6 +13,16 @@ builder.Services.AddSingleton<ITimestampService, UnixTimestampService>();
 // builder.Services.AddTransient<ITimestampService, UnixTimestampService>(); каждый раз создаются разные объекты
 builder.Services.AddSingleton<IPasswordGeneratorService, PasswordGenerator>();
 
+// Включение сессии - длительного хранилища, что позволяет сохранять данные между запросами
+builder.Services.AddDistributedMemoryCache();
+
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromSeconds(10);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -28,6 +38,8 @@ app.UseRouting();
 
 app.UseAuthorization();
 
+app.UseSession(); // включение сессии
+
 app.MapStaticAssets();
 
 app.MapControllerRoute(
@@ -37,3 +49,4 @@ app.MapControllerRoute(
 
 
 app.Run();
+

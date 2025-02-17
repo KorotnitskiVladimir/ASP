@@ -1,0 +1,74 @@
+﻿@using ASP.Models.Home
+@{
+    ViewData["Title"] = "Models";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Review</h1>
+</div>
+
+<h3>Тут можно оставить отзыв на товар</h3>
+<form asp-action="ReviewForm">
+    Имя: <input name="author" value="@Model.ReviewModel?.Author"/><br/>
+    Отзыв: <input type="text" name="review" value="@Model.ReviewModel?.Review"/><br/>
+    Оценка: <input type="number" min="0" max="5" name="rate" value="@Model.ReviewModel?.Rate"/>
+    Дата: <input type="date" name="date" value="@Model.ReviewModel?.Date"/>
+    <button>Отправить</button>
+</form>
+
+@if (Model.ReviewModel != null)
+{
+    <p>Передано данные: @Model.ReviewModel.Author, @Model.ReviewModel.Review, @Model.ReviewModel.Rate, 
+        @Model.ReviewModel.Date</p>
+}
+<br/><br/>
+<h3>Ajax Form</h3>
+<form id="ajax-review">
+    Имя: <input name="author"/><br/>
+    Отзыв: <input type="text" name="review"/><br/>
+    Оценка: <input type="number" min="0" max="5" name="rate"/>
+    Дата: <input type="date" name="date"/>
+    <button>Отправить</button>
+</form>
+<p id="rev-1"></p>
+<p id="rev-2"></p>
+<script>
+    document.addEventListener('submit', e => {      
+        const revForm = e.target;                      
+        if (revForm.id == 'ajax-review') {
+            e.preventDefault();                     
+           const body = {
+               "Author": revForm.querySelector('[name="author"]').value,
+               "Review": revForm.querySelector('[name="review"]').value,
+               "Rate": revForm.querySelector('[name="rate"]').value,
+               "Date": revForm.querySelector('[name="date"]').value
+        }
+        const reviewData = new FormData(revForm);
+        fetch("/Home/AjaxJsonReview", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"},
+                body: JSON.stringify(body)
+                })
+                .then(r => r.json())
+                .then(j => {
+                    console.log("AJAX-JSON", j);
+                    document.getElementById("rev-1")
+                    .innerText=`Полученные по JSON данные: Author='${j.author}', Review='${j.review}', Rate='${j.rate}',
+                    Date='${j.date}'`;
+                });
+
+        fetch( "/Home/AjaxReview", 
+        {
+            method: "POST",
+            body: reviewData})
+            .then(r => r.json())
+            .then(j => {
+                console.log(j);
+                document.getElementById("rev-2")
+                .innerText=`Полученные по formData данные: Author='${j.author}', Review='${j.review}', Rate='${j.rate}',
+                Date='${j.date}'`;
+                })
+        }});
+</script>
+

@@ -1,0 +1,90 @@
+﻿@using ASP.Models.Home 
+@model HomeModelsViewModel 
+@{
+    ViewData["Title"] = "Models";
+    // в Razor есть поле Model, тип которого мы определяем
+}
+
+<div class="text-center">
+    <h1 class="display-4">Models</h1>
+</div>
+
+<p>
+    Модели в ASP - это классы (или объекты), которые предназначены для передачи данных между разными частями проекта. 
+    Условно различают
+</p>
+<ul>
+    <li>Модели представлений - данные, которые необходимы для формирования страницы-представления (от контроллера к
+        представлению).</li>
+    <li>Модели форм - данные, которые передаются от клиентской части (от представления к контроллеру), как правило,
+        введенные пользователем.</li>
+    <li>Модели данных (Entities) - данные, которые передаются к/от постоянного хранилища.</li>
+</ul>
+
+<h2>Модели форм. Данные от пользователя</h2>
+<p>
+    Отправка форм может производиться двумя способами - традицонной HTML-формой и асинхронным AJAX (fetch) запросом.
+</p>
+
+<h3>Отправка HTML формы</h3>
+
+<form asp-action="Register">
+    Имя: <input name="user-name" value="@Model.FormModel?.UserName"/><br/>
+    E-mail: <input type="email" name="user-email" value="@Model.FormModel?.UserEmail"/><br/>
+    <button>Отправить</button>
+</form>
+@if (Model.FormModel != null)
+{
+    <p>Передано данные: @Model.FormModel.UserName, @Model.FormModel.UserEmail</p>
+}
+
+@***********************************************************************************@
+<h3>Асинхронная отправка формы AJAX</h3>
+<form id="ajax-form">
+    Имя: <input name="user-name"/><br/>
+    E-mail: <input type="email" name="user-email"/><br/>
+    <button>Отправить</button>
+</form>
+<p id="out-1"></p>
+<p id="out-2"></p>
+<script>
+    document.addEventListener('submit', e => {      // С целью предотвращения автоматической отправки форм создается
+        const form = e.target;                      // общий слушатель событий submit. Формы отличаются по id
+        if (form.id == 'ajax-form') {
+            e.preventDefault();                     // prevenetDefault - прекращение отправки
+            
+            // в зависимости от бекенда отправляем форму или превратив ее в JSON
+           const body = {
+               "userName": form.querySelector('[name="user-name"]').value,
+               "userEmail": form.querySelector('[name="user-email"]').value,
+        }
+        // или оставляем формой, создавая для передачи данных объект FormData
+        const formData = new FormData(form);
+           
+        // Отправляем данные в AJAX
+        // Для JSON
+        fetch("/Home/AjaxJson", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"},
+                body: JSON.stringify(body)
+                })
+                .then(r => r.json())
+                .then(j => {
+                    console.log("AJAX-JSON", j);
+                    document.getElementById("out-1")
+                    .innerText=`Полученные по JSON данные: userName='${j.userName}', userEmail='${j.userEmail}'`;
+                });
+        // для формы:
+        fetch( "/Home/Ajax", 
+        {
+            method: "POST",
+            body: formData})
+            .then(r => r.json())
+            .then(j => {
+                console.log(j);
+                document.getElementById("out-2")
+                .innerText=`Полученные по formData данные: userName='${j.userName}', userEmail='${j.userEmail}'`;
+                })
+        }});
+</script>
