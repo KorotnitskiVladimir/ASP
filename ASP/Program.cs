@@ -1,5 +1,7 @@
+using ASP.Data;
 using ASP.Services.PasswordGenerator;
 using ASP.Services.Timestamp;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +24,13 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
+
+// Регистрация контекста данных - аналогична сервисам
+builder.Services.AddDbContext<DataContext>(         // Метод регистрации - AddDbContext 
+    options => options                   // options - то, что передается в конструктор 
+        .UseSqlServer(builder                       // DataContext(DbContextOptions)
+            .Configuration                          // UseSqlServer - конфигурация для MS SQL Server 
+            .GetConnectionString("LocalMs"))); // builder.Configuration - доступ к файлам конфигурации (appsettings.json)
 
 var app = builder.Build();
 
