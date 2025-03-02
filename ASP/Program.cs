@@ -1,4 +1,6 @@
 using ASP.Data;
+using ASP.Middleware;
+using ASP.Services.KDF;
 using ASP.Services.PasswordGenerator;
 using ASP.Services.Timestamp;
 using Microsoft.EntityFrameworkCore;
@@ -7,6 +9,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddSingleton<IKDFService, PBKDF1Service>();
 
 // Регистрируем сервисы
 // builder.Services.AddSingleton<ITimestampService, SystemTimestampService>();
@@ -20,7 +24,7 @@ builder.Services.AddDistributedMemoryCache();
 
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.FromSeconds(10);
+    options.IdleTimeout = TimeSpan.FromMinutes(10);
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
@@ -48,6 +52,8 @@ app.UseRouting();
 app.UseAuthorization();
 
 app.UseSession(); // включение сессии
+
+app.UseAuthSession();
 
 app.MapStaticAssets();
 

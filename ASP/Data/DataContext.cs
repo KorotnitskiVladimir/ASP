@@ -17,6 +17,11 @@ public class DataContext : DbContext
         modelBuilder.Entity<Entities.UserAccess>()
             .HasIndex(a => a.Login)
             .IsUnique();
+        modelBuilder.Entity<Entities.UserAccess>()
+            .HasOne(ua => ua.UserData)
+            .WithMany()
+            .HasForeignKey(ua => ua.UserId)
+            .HasPrincipalKey(u => u.Id);
         
         modelBuilder.Entity<Entities.UserRole>().HasData(
             new Entities.UserRole()

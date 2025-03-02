@@ -8,6 +8,10 @@ public class UserAccess
     public string Login { get; set; } = null!;
     public string Salt { get; set; } = null!;
     public string Dk { get; set; } = null!;
+    
+    // Навигационные свойства - это свойства (get; set;), которые ссылаются на другие сущности (Entities).
+    // EntityFramework может автоматически их заполнять через связи
+    public UserData UserData { get; set; } = null!;
 
     public override string ToString()
     {
