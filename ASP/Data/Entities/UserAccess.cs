@@ -13,6 +13,8 @@ public class UserAccess
     // EntityFramework может автоматически их заполнять через связи
     public UserData UserData { get; set; } = null!;
 
+    public UserRole UserRole { get; set; } = null!;
+
     public override string ToString()
     {
         return $"UserAccess: Id({Id}), UserId({UserId}), RoleId({RoleId}), Login({Login})";

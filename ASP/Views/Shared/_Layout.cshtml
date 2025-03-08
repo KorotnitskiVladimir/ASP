@@ -1,5 +1,8 @@
-﻿@{
+﻿@using System.Security.Claims
+@{
     bool isAuthenticated = Context.Items.ContainsKey("auth");
+    string? userName = Context.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value;
+    char? firstLetter = userName?[0];
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -33,6 +36,7 @@
                 </ul>
                 @if (isAuthenticated)
                 {
+                    <span class="auth-letter" title="@userName">@firstLetter</span>
                     <a class="nav-link text-dark" href="?logout">Sign Out</a>
                 }
                 else

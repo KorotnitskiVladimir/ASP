@@ -1,0 +1,13 @@
+﻿@{
+    ViewData["Title"] = "Shop";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Shop</h1>
+</div>
+
+@foreach (var category in Model.Categories)
+{
+    <img src="/Shop/Image/@(category.ImageUrl)" alt="Image"/>
+    <p>@category.Name</p>
+}

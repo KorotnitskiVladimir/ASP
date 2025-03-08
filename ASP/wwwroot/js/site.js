@@ -4,6 +4,7 @@
 // Write your JavaScript code.
 
 const elem = document.getElementById('message');
+const alert = document.getElementById('alert');
 document.addEventListener('submit', e => {
     const form = e.target;
     if(form.id == "auth-modal-form") {
@@ -24,7 +25,7 @@ document.addEventListener('submit', e => {
             fetch("/User/Signin", {
                 method: 'GET',
                 headers: {
-                    'Auth': 'Basic ' + credentials
+                    'Authorization': 'Basic ' + credentials
                 }
             }).then(r => r.json())
                 .then(j => {
@@ -36,6 +37,38 @@ document.addEventListener('submit', e => {
                     }
                 })
             console.log("Submission stopped");
+        }
+    }
+    if (form.id == "admin-category-form")
+    {
+        e.preventDefault();
+        const name = document.querySelector('[name="category-name"]').value;
+        const description = document.querySelector('[name="category-description"]').value;
+        const slug = document.querySelector('[name="category-slug"]').value;
+        const image = document.querySelector('[name="category-image"]').value;
+        if (name.length == 0 || description.length == 0 || slug.length == 0 || image == null)
+        {
+            alert.innerHTML = "There's a problem with input. Please check data";
+            alert.style.visibility = 'visible';
+        }
+        if (name.length > 0 && description.length > 0 && slug.length > 0 && image) {
+            if (alert.style.visibility == 'visible')
+            {
+                alert.style.visibility = 'hidden';
+            }
+            fetch("/Admin/AddCategory", {
+                method: 'POST',
+                body: new FormData(form)
+            }).then(r => r.json())
+                .then(j => {
+                    if (j.status == 401) {
+                        console.log(j);
+                        alert.innerHTML = j.message;
+                        alert.style.visibility = 'visible';
+                    } else {
+                        window.location.reload();
+                    }
+                });
         }
     }
 })

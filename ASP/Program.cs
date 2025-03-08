@@ -2,6 +2,7 @@ using ASP.Data;
 using ASP.Middleware;
 using ASP.Services.KDF;
 using ASP.Services.PasswordGenerator;
+using ASP.Services.Storage;
 using ASP.Services.Timestamp;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,6 +19,8 @@ builder.Services.AddSingleton<IKDFService, PBKDF1Service>();
 builder.Services.AddSingleton<ITimestampService, UnixTimestampService>();
 // builder.Services.AddTransient<ITimestampService, UnixTimestampService>(); каждый раз создаются разные объекты
 builder.Services.AddSingleton<IPasswordGeneratorService, PasswordGenerator>();
+
+builder.Services.AddSingleton<IStorageService, FileStorageService>();
 
 // Включение сессии - длительного хранилища, что позволяет сохранять данные между запросами
 builder.Services.AddDistributedMemoryCache();
