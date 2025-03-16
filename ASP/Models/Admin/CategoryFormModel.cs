@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace ASP.Views.Admin;
+namespace ASP.Models.Admin;
 
 public class CategoryFormModel
 {

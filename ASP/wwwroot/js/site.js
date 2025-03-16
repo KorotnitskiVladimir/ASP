@@ -71,4 +71,35 @@ document.addEventListener('submit', e => {
                 });
         }
     }
+    if (form.id == "admin-product-form")
+    {
+        e.preventDefault();
+        const name = document.querySelector('[name="product-name"]').value;
+        const images = document.querySelector('[name="product-image"]').value;
+        const price = parseFloat(document.querySelector('[name = "product-price"]').value);
+        const stock = parseInt(document.querySelector('[name = "product-stock"]').value);
+        if (name.length == 0  || images == null || price <= 0 || stock < 0)
+        {
+            alert.innerHTML = "There's a problem with input. Please check data";
+            alert.style.visibility = 'visible';
+        }
+        if (name.length > 0 && images && price > 0 && stock >= 0) {
+            if (alert.style.visibility == 'visible') {
+                alert.style.visibility = 'hidden';
+            }
+            fetch("/Admin/AddProduct", {
+                method: 'POST',
+                body: new FormData(form)
+            }).then(r => r.json())
+                .then(j => {
+                    if (j.status == 401) {
+                        console.log(j);
+                        alert.innerHTML = j.message;
+                        alert.style.visibility = 'visible';
+                    } else {
+                        window.location.reload();
+                    }
+                });
+        }
+    }
 })

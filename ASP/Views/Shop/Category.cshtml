@@ -1,0 +1,28 @@
+﻿@using ASP.Data
+@model ASP.Models.Shop.ShopCategoryViewModel
+
+@if (Model.Category == null)
+{
+    <div class="text-center">
+        <h1 class="display-4">Requested category not found</h1>
+    </div>
+}
+else
+{
+    <div class="row" style="scale: 0.7">
+        <h3>Categories:</h3>
+        @foreach (var category in Model.Categories)
+        {
+            @Html.DisplayFor(c => category, "CategoryCard")
+        }
+    </div>
+    <div class="text-center">
+        <h1 class="display-4">Category @Model.Category.Name</h1>
+    </div>
+    <div class="row row-cols-2 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+        @foreach (var product in Model.Category.Products)
+        {
+            @Html.DisplayFor(m => product, "ProductCard")
+        }
+    </div>
+}

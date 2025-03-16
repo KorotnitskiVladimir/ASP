@@ -8,4 +8,8 @@ public class Category
     public string Description { get; set; } = null!;
     public string Slug { get; set; } = null!;
     public string ImageUrl { get; set; } = null!;
+    
+    // Navigational properties - ссылки на другие Entities
+    public Category ParentCategory { get; set; }
+    public List<Product> Products { get; set; } = new();
 }

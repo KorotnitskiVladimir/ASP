@@ -6,8 +6,14 @@
     <h1 class="display-4">Shop</h1>
 </div>
 
-@foreach (var category in Model.Categories)
-{
-    <img src="/Shop/Image/@(category.ImageUrl)" alt="Image"/>
-    <p>@category.Name</p>
-}
+<div class="row row-cols-2 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+@*
+    Шаблоны отображения (Display Templates) - отделенные представления (Views), которые предназначены для разметки
+    частичных моделей, как правило, моделейй данных (Entities)
+*@
+    @foreach (var category in Model.Categories)
+    {
+        @Html.DisplayFor(m => category, "CategoryCard")
+    }
+</div>
+
