@@ -3,6 +3,8 @@
     bool isAuthenticated = Context.Items.ContainsKey("auth");
     string? userName = Context.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value;
     char? firstLetter = userName?[0];
+    string? uaId = Context.User.Claims
+        .FirstOrDefault(c => c.Type == ClaimTypes.Sid)?.Value;
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -36,8 +38,9 @@
                 </ul>
                 @if (isAuthenticated)
                 {
-                    <span class="auth-letter" title="@userName">@firstLetter</span>
-                    <a class="nav-link text-dark" href="?logout">Sign Out</a>
+                    <a class="nav-link text-dark" asp-controller="Shop" asp-action="Cart" style="margin: 0.5em"><i class="bi bi-cart4"></i></a>
+                    <span class="auth-letter" data-auth-ua-id="@uaId" title="@userName" style="margin: 0.5em">@firstLetter</span>
+                    <a class="nav-link text-dark" href="?logout" style="margin: 0.5em">Sign Out</a>
                 }
                 else
                 {

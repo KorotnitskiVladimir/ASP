@@ -44,3 +44,21 @@ body {
   font-weight: bold;
   visibility: hidden;
 }
+
+.card-body{
+    position: relative;
+}
+
+.card-fab{
+    position: absolute;
+    right: 1em;
+    top: -1em;
+    width: 2.5em;
+    height: 2.5em;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #86b7fe;
+    cursor: pointer;
+}

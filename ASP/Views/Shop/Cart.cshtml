@@ -1,0 +1,39 @@
+﻿@model ASP.Models.Shop.ShopCartViewModel
+
+@{
+    ViewData["Title"] = "Cart";
+    bool isAuthenticated = Context.Items.ContainsKey("auth");
+}
+
+@if (isAuthenticated)
+{
+    <div class="text-center">
+        <h1 class="display-4">My cart</h1>
+    </div>
+    
+    if (Model.Cart == null)
+    {
+        <h2>You don't have an active cart</h2>
+    }
+    else
+    {
+        int count = Model.Cart.CartItems.Count;
+        string verb;
+        string positions;
+        if (count == 1)
+        {
+            verb = "is";
+            positions = "position";
+        }
+        else
+        {
+            verb = "are";
+            positions = "positions";
+        }
+        <h2>There @(verb + " " + count + " " + positions) in your cart</h2>
+    }
+}
+else
+{
+    <h2>Please login to view cart</h2>
+}

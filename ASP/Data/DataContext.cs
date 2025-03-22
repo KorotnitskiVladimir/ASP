@@ -13,6 +13,10 @@ public class DataContext : DbContext
     
     public DbSet<Entities.Product> Products { get; private set; }
     
+    public DbSet<Entities.Cart> Carts { get; private set; }
+    
+    public DbSet<Entities.CartItem> CartItems { get; private set; }
+    
     public DataContext(DbContextOptions options) : base(options) {}
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -53,6 +57,19 @@ public class DataContext : DbContext
       modelBuilder.Entity<Entities.Product>()
           .HasIndex(p => p.Slug)
           .IsUnique();
+
+      modelBuilder.Entity<Entities.CartItem>()
+          .HasOne(ci => ci.Cart)
+          .WithMany(c => c.CartItems);
+
+      modelBuilder.Entity<Entities.CartItem>()
+          .HasOne(ci => ci.Product)
+          .WithMany();
+      modelBuilder.Entity<Entities.Cart>()
+          .HasOne(c => c.UserAccess)
+          .WithMany()
+          .HasForeignKey(c => c.UserAccessId)
+          .HasPrincipalKey(ua => ua.Id);
                   
         modelBuilder.Entity<Entities.UserRole>().HasData(
             new Entities.UserRole()

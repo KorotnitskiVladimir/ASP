@@ -1,0 +1,30 @@
+﻿@model ASP.Models.Shop.ShopProductViewModel
+
+@foreach (var breadcrumb in Model.BreadCrumbs)
+{
+    <a href="@breadcrumb.Url">@breadcrumb.Title</a>
+}
+
+@if (Model.Product == null)
+{
+    <div class="text-center">
+        <h1 class="display-4">Requested Product not found</h1>
+    </div>
+}
+else
+{
+    <div class="row">
+        <div class="col-4">
+            @foreach (var image in Model.Product.ImagesCsv.Split(',', StringSplitOptions.RemoveEmptyEntries))
+            {
+                <img src="/Shop/Image/@image" alt="Image" class="img-fluid">
+            }
+        </div>
+        <div class="col-8">
+            Name: @Model.Product.Name<br/>
+            Description: @Model.Product.Description<br/>
+            Price: @Model.Product.Price $<br/>
+            In stock: @Model.Product.Stock pcs<br/>
+        </div>
+    </div>
+}
