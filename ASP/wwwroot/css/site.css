@@ -62,3 +62,9 @@ body {
     background-color: #86b7fe;
     cursor: pointer;
 }
+
+.cart-product-img{
+    max-height: 5em;
+    max-width: 7em;
+    width: 99%;
+}

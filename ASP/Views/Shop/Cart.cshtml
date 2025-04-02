@@ -18,19 +18,58 @@
     else
     {
         int count = Model.Cart.CartItems.Count;
-        string verb;
-        string positions;
-        if (count == 1)
+        if (count == 0)
         {
-            verb = "is";
-            positions = "position";
+            <h2>Cart is empty. Let's go <a asp-area="" asp-controller="Shop" asp-action="Index">shopping!</a></h2>
         }
         else
         {
-            verb = "are";
-            positions = "positions";
+            int quantity = 0;
+            foreach (var item in Model.Cart.CartItems)
+            {
+                quantity += item.Quantity;
+            }
+            string verb;
+            string positions;
+            if (count == 1)
+            {
+                verb = "is";
+                positions = "position";
+            }
+            else
+            {
+                verb = "are";
+                positions = "positions";
+            }
+            <h2>There @(verb + " " + count + " " + positions) in your cart</h2>
+            @foreach (var item in Model.Cart.CartItems)
+            {
+                @Html.DisplayFor(m => item, "CartItem")
+            }
+            <hr/>
+            <div class="row">
+                <div class="col offset-4 col-1">Total</div>
+                <div class="col col-1">@quantity</div>
+                <div class="col col-1">@Model.Cart.Price.ToString("0.00") $</div>
+            </div>
+            <hr/>
+            <div class="row cart-item-row">
+                <div class="col offset-5 col-1">
+                    <button class="btn btn-outline-danger" data-cart-cancel="@Model.Cart.Id" value="0">Cancel</button>
+                </div>
+                <div class="col col-1">
+                    <button class="btn btn-outline-success" data-cart-submit="@Model.Cart.Id" value="1">Submit</button>
+                </div>
+            </div>
+            <hr/>
+            <div><h3>You also may be interested in:</h3></div>
+            <div class="row" style="scale: 0.5">
+                @foreach (var category in Model.Products)
+                {
+                    @Html.DisplayFor(m => category, "ProductCard")
+                }
+            </div>
         }
-        <h2>There @(verb + " " + count + " " + positions) in your cart</h2>
     }
 }
 else

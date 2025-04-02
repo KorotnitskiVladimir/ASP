@@ -1,0 +1,23 @@
+﻿@model ASP.Data.Entities.CartItem
+
+<div class="row cart-item-row">
+    <div class="col col-1">
+        <a class="text-dark h-100"
+           asp-controller="Shop" asp-action="Product" asp-route-id="@(Model.Product.Slug ?? Model.Product.Id.ToString())">
+        <img class="cart-product-img" src="@(Model.Product.ImagesCsv.Split(',').First())" alt="Product">
+        </a>
+    </div>
+    <div class="col col-2">@Model.Product.Name</div>
+    <div class="col col-1">@Model.Product.Price.ToString("0.00")</div>
+    <div class="col col-2">
+        <button class="btn btn-outline-warning" data-cart-decrement="@Model.Id">-</button>
+        <span data-cart-quantity>@Model.Quantity</span>
+        <button class="btn btn-outline-success" data-cart-increment="@Model.Id">+</button>
+    </div>
+    <div class="col col-1">@Model.Price.ToString("0.00")</div>
+    <div class="col col-1">
+        <button class="btn btn-outline-danger" data-cart-delete="@Model.Id">
+            <i class="bi bi-trash"></i>
+        </button>
+    </div>
+</div>
