@@ -39,6 +39,15 @@ builder.Services.AddDbContext<DataContext>(         // Метод регистр
             .Configuration                          // UseSqlServer - конфигурация для MS SQL Server 
             .GetConnectionString("LocalMs"))); // builder.Configuration - доступ к файлам конфигурации (appsettings.json)
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("CorsPolicy",
+        policy  =>
+        {
+            policy.AllowAnyOrigin();
+        });
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -51,7 +60,7 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseRouting();
-
+app.UseCors("CorsPolicy");
 app.UseAuthorization();
 
 app.UseSession(); // включение сессии
