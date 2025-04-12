@@ -25,3 +25,13 @@ public class Manipulations
     public string? Update { get; set; }
     public string? Delete { get; set; }
 }
+
+/*
+ * Proxy:
+ *[Browser/Mobile]      [Webhost]           [Firm DB]
+ * Frontend      GET     Proxy     GET        Backend
+ * shop.firm.ua <---->  firm.ua <------->   123.75.78.94
+ *               500               404
+ *       could not complete      not found
+ *        200 {status: 404}     200 {status: 404}
+*/

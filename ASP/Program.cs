@@ -10,6 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddSingleton<IKDFService, PBKDF1Service>();
 
@@ -38,6 +39,8 @@ builder.Services.AddDbContext<DataContext>(         // Метод регистр
         .UseSqlServer(builder                       // DataContext(DbContextOptions)
             .Configuration                          // UseSqlServer - конфигурация для MS SQL Server 
             .GetConnectionString("LocalMs"))); // builder.Configuration - доступ к файлам конфигурации (appsettings.json)
+
+builder.Services.AddScoped<DataAccessor>();
 
 builder.Services.AddCors(options =>
 {

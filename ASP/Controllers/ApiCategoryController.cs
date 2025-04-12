@@ -8,11 +8,11 @@ namespace ASP.Controllers
     [ApiController]
     public class ApiCategoryController : ControllerBase
     {
-        private readonly DataContext _dataContext;
+        private readonly DataAccessor _dataAccessor;
 
-        public ApiCategoryController(DataContext dataContext)
+        public ApiCategoryController(DataAccessor dataAccessor)
         {
-            _dataContext = dataContext;
+            _dataAccessor = dataAccessor;
         }
         [HttpGet]
         public RestResponse Categories() // название произвольное. маршрутизация по [HttpGet]
@@ -22,10 +22,19 @@ namespace ASP.Controllers
                 Service = "Api Products Categories",
                 DataType = "array",
                 CacheTime = 600,
-                Data = _dataContext.Categories
-                    .AsEnumerable()
-                    .Select(c => c with { ImageUrl = "http://localhost:5089/Shop/Image/" + c.ImageUrl})
-                    .ToList(),
+                Data = _dataAccessor.AllCategories()
+            };
+        }
+
+        [HttpGet("{id}")]
+        public RestResponse Category(string id)
+        {
+            return new()
+            {
+                Service = "Api Products Categories",
+                DataType = "object",
+                CacheTime = 600,
+                Data = _dataAccessor.GetCategory(id)
             };
         }
     }

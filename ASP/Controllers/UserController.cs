@@ -1,5 +1,7 @@
-﻿using System.Text.Json;
+﻿using System.ComponentModel;
+using System.Text.Json;
 using ASP.Data;
+using ASP.Data.Entities;
 using ASP.Models.User;
 using ASP.Services.KDF;
 using ASP.Services.PasswordGenerator;
@@ -14,14 +16,15 @@ public class UserController: Controller
 
     private readonly DataContext _dataContext;
     private readonly IKDFService _kdfService;
-
+    private readonly DataAccessor _dataAccessor;
     private readonly IPasswordGeneratorService _passwordGeneratorService;
     // GET
-    public UserController(DataContext dataContext, IKDFService kdfService, IPasswordGeneratorService passwordGeneratorService)
+    public UserController(DataContext dataContext, IKDFService kdfService, IPasswordGeneratorService passwordGeneratorService, DataAccessor dataAccessor)
     {
         _dataContext = dataContext;
         _kdfService = kdfService;
         _passwordGeneratorService = passwordGeneratorService;
+        _dataAccessor = dataAccessor;
     }
 
     
@@ -75,53 +78,17 @@ public class UserController: Controller
 
     public IActionResult Signin()
     {
-        // 'Basic' HTTP Authentication Scheme  https://datatracker.ietf.org/doc/html/rfc7617#section-2
-        // Данные аутентификации приходят в заголовке Authorization
-        // по схеме Basic QWxhZGRpbjpvcGVuIHNlc2FtZQ== где данные Base64 закодирована последовательность
-        // "login:password"
-        string authHeader = Request.Headers.Authorization.ToString();
-        if (string.IsNullOrEmpty(authHeader))
-        {
-            return Json(new { status = 401, message = "Authorization header required" });
-        }
-
-        string scheme = "Basic ";
-        if (!authHeader.StartsWith(scheme))
-        {
-            return Json(new { status = 401, message = $"Authorization scheme must be {scheme}" });
-        }
-
-        string credentials = authHeader[scheme.Length..];
-        string authData;
+        AccessToken accessToken;
         try
         {
-            authData = System.Text.Encoding.UTF8.GetString(Base64UrlTextEncoder.Decode(credentials));
+            accessToken = _dataAccessor.Authenticate(Request);
         }
-        catch
+        catch (Win32Exception e)
         {
-            return Json(new { status = 401, message = $"Not valid Base64 code '{credentials}'" });
-        }
-        // authData == "login:password"
-        string[] parts = authData.Split(':', 2);
-        if (parts.Length != 2)
-        {
-            return Json(new { status = 401, message = "Not valid credentials format (missing ':'?)" });
-        }
-
-        string login = parts[0];
-        string password = parts[1];
-        var userAccess = _dataContext.UserAccesses.FirstOrDefault(ua => ua.Login == login);
-        if (userAccess == null)
-        {
-            return Json(new { status = 401, message = "Credentials rejected" });
-        }
-        
-        if (_kdfService.DerivedKey(password, userAccess.Salt) != userAccess.Dk)
-        {
-            return Json(new { status = 401, message = "Credentials rejected." });
+            return Json(new { status = e.ErrorCode, message = e.Message });
         }
         // Сохраняем в сессию вседения об аутентификации
-        HttpContext.Session.SetString("userAccessId", userAccess.Id.ToString());
+        HttpContext.Session.SetString("userAccessId", accessToken.Sub.ToString());
         return Json(new { status = 200, message = "OK" });
     }
 

@@ -17,6 +17,8 @@ public class DataContext : DbContext
     
     public DbSet<Entities.CartItem> CartItems { get; private set; }
     
+    public DbSet<Entities.AccessToken> AccessTokens { get; private set; }
+    
     public DataContext(DbContextOptions options) : base(options) {}
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -70,6 +72,9 @@ public class DataContext : DbContext
           .WithMany()
           .HasForeignKey(c => c.UserAccessId)
           .HasPrincipalKey(ua => ua.Id);
+
+      modelBuilder.Entity<Entities.AccessToken>()
+          .HasKey(t => t.Jti);
                   
         modelBuilder.Entity<Entities.UserRole>().HasData(
             new Entities.UserRole()

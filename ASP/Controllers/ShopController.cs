@@ -16,18 +16,20 @@ public class ShopController : Controller
 {
     private readonly DataContext _dataContext;
     private readonly IStorageService _storageService;
+    private readonly DataAccessor _dataAccessor;
 
-    public ShopController(DataContext dataContext, IStorageService storageService)
+    public ShopController(DataContext dataContext, IStorageService storageService, DataAccessor dataAccessor)
     {
         _dataContext = dataContext;
         _storageService = storageService;
+        _dataAccessor = dataAccessor;
     }
     // GET
     public IActionResult Index()
     {
         ShopIndexViewModel viewModel = new()
         {
-            Categories = _dataContext.Categories.ToList()
+            Categories = _dataAccessor.AllCategories()
         };
         return View(viewModel);
     }
@@ -41,7 +43,7 @@ public class ShopController : Controller
     {
         ShopCategoryViewModel viewModel = new()
         {
-            Categories = _dataContext.Categories.ToList(),
+            Categories = _dataAccessor.AllCategories(),
             Category = _dataContext
                 .Categories
                 .Include(c => c.Products) // заполнение навигационных свойств
