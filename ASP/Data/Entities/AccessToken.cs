@@ -1,4 +1,6 @@
-﻿namespace ASP.Data.Entities;
+﻿using System.Text.Json.Serialization;
+
+namespace ASP.Data.Entities;
 
 public class AccessToken
 {
@@ -9,4 +11,7 @@ public class AccessToken
     public DateTime? Nbf { get; set; } // Not before
     public DateTime Exp { get; set; }
     public string? Iss { get; set; } // Issuer
+    //[JsonIgnore] 
+    public UserData User { get; set; } = null!;
+    [JsonIgnore] public UserAccess UserAccess { get; set; } = null!;
 }

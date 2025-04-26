@@ -47,7 +47,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("CorsPolicy",
         policy  =>
         {
-            policy.AllowAnyOrigin();
+            policy.AllowAnyOrigin().AllowAnyHeader();
         });
 });
 
@@ -69,6 +69,8 @@ app.UseAuthorization();
 app.UseSession(); // включение сессии
 
 app.UseAuthSession();
+
+app.UseAuthToken();
 
 app.MapStaticAssets();
 

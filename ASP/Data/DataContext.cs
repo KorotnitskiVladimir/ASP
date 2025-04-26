@@ -75,6 +75,16 @@ public class DataContext : DbContext
 
       modelBuilder.Entity<Entities.AccessToken>()
           .HasKey(t => t.Jti);
+
+      modelBuilder.Entity<AccessToken>()
+          .HasOne(t => t.User)
+          .WithMany()
+          .HasForeignKey(t => t.Aud);
+
+      modelBuilder.Entity<AccessToken>()
+          .HasOne(t => t.UserAccess)
+          .WithMany()
+          .HasForeignKey(t => t.Sub);
                   
         modelBuilder.Entity<Entities.UserRole>().HasData(
             new Entities.UserRole()

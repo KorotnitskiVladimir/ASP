@@ -103,7 +103,9 @@ public class DataAccessor
 
         string login = parts[0];
         string password = parts[1];
-        var userAccess = _dataContext.UserAccesses.FirstOrDefault(ua => ua.Login == login);
+        var userAccess = _dataContext.UserAccesses
+                .Include(ua => ua.UserData)
+                .FirstOrDefault(ua => ua.Login == login);
         if (userAccess == null)
         {
             throw new Win32Exception(401, "Credentials rejected");
@@ -137,6 +139,46 @@ public class DataAccessor
             _dataContext.SaveChanges();
             return accessToken;
         }
+    }
+
+    public AccessToken Authorize(HttpRequest Request)
+    {
+        string authHeader = Request.Headers.Authorization.ToString();
+        if (string.IsNullOrEmpty(authHeader))
+        {
+            throw new Win32Exception(401, "Authorization header required");
+        }
+
+        string scheme = "Bearer ";
+        if (!authHeader.StartsWith(scheme))
+        {
+            throw new Win32Exception(401, $"Authorization scheme must be {scheme}");
+        }
+        string credentials = authHeader[scheme.Length..];
+        Guid jti;
+        try
+        {
+            jti = Guid.Parse(credentials);
+        }
+        catch
+        {
+            throw new Win32Exception(401, "Authorization credential invalid formatted");
+        }
+
+        AccessToken? accessToken = _dataContext.AccessTokens.Include(at => at.User)
+            .FirstOrDefault(at => at.Jti == jti);
+            
+        if (accessToken == null)
+        {
+            throw new Win32Exception(401, "Bearer credentials rejected");
+        }
+
+        if (accessToken.Exp < DateTime.Now)
+        {
+            throw new Win32Exception(401, "Bearer credentials expired");
+        }
+
+        return accessToken;
     }
 }
 
