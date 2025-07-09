@@ -1,5 +1,6 @@
 using ASP.Data;
 using ASP.Middleware;
+using ASP.Services.AzureStorage;
 using ASP.Services.KDF;
 using ASP.Services.PasswordGenerator;
 using ASP.Services.Storage;
@@ -22,6 +23,8 @@ builder.Services.AddSingleton<ITimestampService, UnixTimestampService>();
 builder.Services.AddSingleton<IPasswordGeneratorService, PasswordGenerator>();
 
 builder.Services.AddSingleton<IStorageService, FileStorageService>();
+
+builder.Services.AddSingleton<ICloudStorageService, CloudFileStorageService>();
 
 // Включение сессии - длительного хранилища, что позволяет сохранять данные между запросами
 builder.Services.AddDistributedMemoryCache();

@@ -2,6 +2,7 @@
 using ASP.Data.Entities;
 using ASP.Services.Storage;
 using ASP.Models.Admin;
+using ASP.Services.AzureStorage;
 using Azure;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -14,10 +15,12 @@ public class AdminController : Controller
 {
     private readonly DataContext _dataContext;
     private readonly IStorageService _storageService;
-    public AdminController(DataContext dataContext, IStorageService storageService)
+    private readonly ICloudStorageService _cloudStorage;
+    public AdminController(DataContext dataContext, IStorageService storageService, ICloudStorageService cloudStorage)
     {
         _dataContext = dataContext;
         _storageService = storageService;
+        _cloudStorage = cloudStorage;
     }
 
     public IActionResult Index()
@@ -50,7 +53,8 @@ public class AdminController : Controller
                 Name = formModel.Name,
                 Description = formModel.Description,
                 Slug = formModel.Slug,
-                ImageUrl = _storageService.SaveFile(formModel.Image)
+                //ImageUrl = _storageService.SaveFile(formModel.Image)
+                ImageUrl = _cloudStorage.SaveFile(formModel.Image)
             };
             _dataContext.Categories.Add(category);
             _dataContext.SaveChanges();

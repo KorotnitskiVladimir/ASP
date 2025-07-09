@@ -27,10 +27,10 @@ public class DataAccessor
             .Where(c => c.DeletedAt == null)
             .AsNoTracking()
             .ToList();
-        foreach (var category in categories)
-        {
-            category.ImageUrl = ImagePath + category.ImageUrl;
-        }
+        //foreach (var category in categories)
+        //{
+        //    category.ImageUrl = ImagePath + category.ImageUrl;
+        //}
         return categories;
     }
 
