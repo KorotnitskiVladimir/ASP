@@ -7,14 +7,15 @@ using Azure.Storage.Blobs.Models;
 public class CloudFileStorageService : ICloudStorageService
 {
     private const string directoryName = "C:\\storage\\";
-    private const string connectionString =
-        "";
+    private const string connectionString = "";
 
-    private const string containerName = "big-images";
-    private const string queueName = "new-images";
+    private const string containerName = "original-images";
+    private const string queueName = "images";
+    private const string smallImagesContainer = "small-images";
 
     private BlobServiceClient blobService;
     private BlobContainerClient blobContainer;
+    private BlobContainerClient smallImagesBlobContainer;
 
     public void ConnectCloud()
     {
@@ -22,6 +23,9 @@ public class CloudFileStorageService : ICloudStorageService
         blobContainer = blobService.GetBlobContainerClient(containerName);
         blobContainer.CreateIfNotExists();
         blobContainer.SetAccessPolicy(PublicAccessType.BlobContainer);
+        smallImagesBlobContainer = blobService.GetBlobContainerClient(smallImagesContainer);
+        smallImagesBlobContainer.CreateIfNotExists();
+        smallImagesBlobContainer.SetAccessPolicy(PublicAccessType.BlobContainer);
     }
     
     public string GetPath(string name)
@@ -46,6 +50,7 @@ public class CloudFileStorageService : ICloudStorageService
             createdBlob.Upload(fs);
         }
 
-        return createdBlob.Uri.AbsoluteUri;
+        BlobClient smallBlob = smallImagesBlobContainer.GetBlobClient(savedName);
+        return smallBlob.Uri.AbsoluteUri;
     }
 }
